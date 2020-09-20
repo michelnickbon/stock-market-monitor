@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using StockMarketMonitor.Models;
 using System;
 using System.Collections.Generic;
@@ -14,7 +13,7 @@ namespace StockMarketMonitor.Services
         private HttpWebRequest webRequest;
         private HttpWebResponse webResponse;
 
-		public async Task<StockInfo> GetStockInfo(string symbol)
+        public async Task<StockInfo> GetStockInfo(string symbol)
         {
             try
             {
@@ -31,7 +30,7 @@ namespace StockMarketMonitor.Services
 
                 var stock = new StockInfo
                 {
-                    Symbol = "test"
+                Symbol = "test"
                 };
 
                 return stock;
