@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace StockMarketMonitor.Models
+﻿namespace StockMarketMonitor.Models
 {
 	public class StockInfo
 	{
