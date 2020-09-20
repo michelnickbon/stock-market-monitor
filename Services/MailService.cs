@@ -7,10 +7,10 @@ namespace StockMarketMonitor.Services
 {
 	class MailService : IMailService
 	{
-        private MailMessage mail;
-        private SmtpClient smtpServer;
+		private MailMessage mail;
+		private SmtpClient smtpServer;
 
-        public MailService() {}
+		public MailService() {}
 
 		public async Task SendEmail(List<Tuple<string, int>> equityList)
 		{
