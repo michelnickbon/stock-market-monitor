@@ -6,16 +6,21 @@ using System.Net;
 
 namespace StockMarketMonitor.Services
 {
-	class StockInfoService
+	public class StockInfoService
 	{
         private HttpWebRequest webRequest;
         private HttpWebResponse webResponse;
         private Stream stream;
-        private readonly string url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=demo";
+        private readonly string apiUrl;
+
+        public StockInfoService()
+        {
+            apiUrl = Environment.GetEnvironmentVariable("API_STOCK_URL");
+        }
 
 		public void GetStockInfo()
 		{
-            webRequest = (HttpWebRequest)WebRequest.Create(string.Format(url));
+            webRequest = (HttpWebRequest)WebRequest.Create(string.Format(apiUrl));
             webRequest.Method = "GET";
             webResponse = (HttpWebResponse)webRequest.GetResponse();
 
