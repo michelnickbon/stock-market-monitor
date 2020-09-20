@@ -15,7 +15,7 @@ namespace StockMarketMonitor
 
             // Get stock info
             var stockService = new StockInfoService();
-            stockService.GetStockInfo();
+            await stockService.GetStockInfo("IBM");
 
             // Send email notification
         }

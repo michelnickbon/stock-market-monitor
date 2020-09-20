@@ -14,26 +14,37 @@ namespace StockMarketMonitor.Services
         private HttpWebRequest webRequest;
         private HttpWebResponse webResponse;
 
-        public StockInfoService() { }
+		public async Task<StockInfo> GetStockInfo(string symbol)
+        {
+            try
+            {
+                webRequest = (HttpWebRequest)WebRequest.Create(BuildEndpointURL(symbol));
+                webRequest.Method = "GET";
+                webResponse = (HttpWebResponse)webRequest.GetResponse();
 
-		public async Task<StockInfo> GetStockInfo()
-		{
-            webRequest = (HttpWebRequest)WebRequest.Create(string.Format(Environment.GetEnvironmentVariable("API_STOCK_URL")));
-            webRequest.Method = "GET";
-            webResponse = (HttpWebResponse)webRequest.GetResponse();
+                using Stream stream = webResponse.GetResponseStream();
+                StreamReader reader = new StreamReader(stream, System.Text.Encoding.UTF8);
 
-            using Stream stream = webResponse.GetResponseStream();
-            StreamReader reader = new StreamReader(stream, System.Text.Encoding.UTF8);
-            string responseString = await reader.ReadToEndAsync();
+                var obj = JObject.Parse(await reader.ReadToEndAsync());
+                var metaData = obj["Meta Data"].ToObject<Dictionary<string, string>>();
+                var timeSeries = obj["Time Series (Daily)"].ToObject<Dictionary<string, Dictionary<string, string>>>();
 
-            var resultObject = JObject.Parse(responseString);
-            var metaData = resultObject["Meta Data"].ToObject<Dictionary<string, string>>();
-            var timeSeries = resultObject["Time Series (Daily)"].ToObject<Dictionary<string, Dictionary<string, string>>>();
+                var stock = new StockInfo
+                {
+                    Symbol = "test"
+                };
 
-            var stock = new StockInfo();
-            stock.Symbol = "test";
+                return stock;
+            }
+            catch (WebException ex)
+            {
+                throw ex;
+            }
+        }
 
-            return stock;
+        public string BuildEndpointURL(string symbol)
+        {
+            return string.Concat(Environment.GetEnvironmentVariable("API_STOCK_BASE_URL"), "symbol=", symbol, Environment.GetEnvironmentVariable("API_KEY"));
         }
     }
 }
