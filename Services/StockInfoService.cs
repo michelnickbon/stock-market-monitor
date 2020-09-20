@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace StockMarketMonitor.Services
 {
-	public class StockInfoService
+	public class StockInfoService : IStockInfoServices
 	{
         private HttpWebRequest webRequest;
         private HttpWebResponse webResponse;

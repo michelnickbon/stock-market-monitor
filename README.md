@@ -3,7 +3,7 @@
 - Email notifications are sent out to the selected user once prices have been collected
 
 # Information
-- Azure Function (Timer triggered)
+- Azure Functions
 - C#
 
 # Preview
