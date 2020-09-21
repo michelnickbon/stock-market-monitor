@@ -7,5 +7,7 @@ namespace StockMarketMonitor.Services
 	public interface IMailService
 	{
 		Task SendEmailNotification(List<StockInfo> stocks);
+
+		string BuildMessageBody(List<StockInfo> stocks);
 	}
 }

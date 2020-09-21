@@ -12,6 +12,9 @@ namespace StockMarketMonitor.Services
 {
 	public class StockInfoService : IStockInfoServices
 	{
+		/// <summary> Requests stock data </summary>
+		/// <param name="symbol"> Stock symbol/ticker </param>
+		/// <returns> Stock model containing symbol and open price </returns>
 		public async Task<StockInfo> GetStockInfo(string symbol)
 		{
 			try
@@ -23,6 +26,7 @@ namespace StockMarketMonitor.Services
 				using Stream stream = webResponse.GetResponseStream();
 				StreamReader reader = new StreamReader(stream, System.Text.Encoding.UTF8);
 
+				// Complex mapping to model, so this will do for now
 				var objResult = JObject.Parse(await reader.ReadToEndAsync());
 				var timeSeries = objResult["Time Series (Daily)"].ToObject<Dictionary<string, Dictionary<string, string>>>().First().Value;
 
@@ -40,6 +44,9 @@ namespace StockMarketMonitor.Services
 			}
 		}
 
+		/// <summary> Builds a dynamic endpoint url </summary>
+		/// <param name="symbol"> Stock symbol/ticker </param>
+		/// <returns> Endpoint url in string format </returns>
 		public string BuildEndpointURL(string symbol)
 		{
 			return string.Concat(Environment.GetEnvironmentVariable("API_STOCK_BASE_URL"), "symbol=", symbol, Environment.GetEnvironmentVariable("API_KEY"));

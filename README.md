@@ -6,6 +6,5 @@
 - C#
 - Azure Functions
 - Alpha Vantage used as Stock API
+- Mailkit used for email notifications
 
-# Preview
-- Preview image will be available soon!
