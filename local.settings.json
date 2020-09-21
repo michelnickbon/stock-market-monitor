@@ -4,6 +4,8 @@
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet",
     "API_STOCK_BASE_URL": "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&",
-    "API_KEY": "&apikey=Y6E3UKARQA27W2VL" // Free key
+    "API_KEY": "&apikey=Y6E3UKARQA27W2VL", // Free key
+    "SMTP_SERVER": "test",
+    "RECIPIENT": "michel.lemponen@gmail.com"
   }
 }

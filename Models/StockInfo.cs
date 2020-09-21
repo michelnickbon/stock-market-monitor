@@ -4,6 +4,6 @@
 	{
 		public string Symbol { get; set; }
 
-		public decimal OpenPrice { get; set; }
+		public double OpenPrice { get; set; }
 	}
 }

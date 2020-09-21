@@ -2,7 +2,9 @@
 using StockMarketMonitor.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -10,27 +12,24 @@ namespace StockMarketMonitor.Services
 {
 	public class StockInfoService : IStockInfoServices
 	{
-		private HttpWebRequest webRequest;
-		private HttpWebResponse webResponse;
-
 		public async Task<StockInfo> GetStockInfo(string symbol)
 		{
 			try
 			{
-				webRequest = (HttpWebRequest)WebRequest.Create(BuildEndpointURL(symbol));
+				HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(BuildEndpointURL(symbol));
 				webRequest.Method = "GET";
-				webResponse = (HttpWebResponse)webRequest.GetResponse();
+				HttpWebResponse webResponse = (HttpWebResponse)webRequest.GetResponse();
 
 				using Stream stream = webResponse.GetResponseStream();
 				StreamReader reader = new StreamReader(stream, System.Text.Encoding.UTF8);
 
-				var obj = JObject.Parse(await reader.ReadToEndAsync());
-				var metaData = obj["Meta Data"].ToObject<Dictionary<string, string>>();
-				var timeSeries = obj["Time Series (Daily)"].ToObject<Dictionary<string, Dictionary<string, string>>>();
+				var objResult = JObject.Parse(await reader.ReadToEndAsync());
+				var timeSeries = objResult["Time Series (Daily)"].ToObject<Dictionary<string, Dictionary<string, string>>>().First().Value;
 
-				var stock = new StockInfo
+				var stock = new StockInfo()
 				{
-					Symbol = "test"
+					Symbol = symbol,
+					OpenPrice = double.Parse(timeSeries.Values.First(), CultureInfo.InvariantCulture)
 				};
 
 				return stock;
