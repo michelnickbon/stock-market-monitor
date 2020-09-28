@@ -1,5 +1,6 @@
-using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
@@ -8,28 +9,36 @@ using StockMarketMonitor.Services;
 
 namespace StockMarketMonitor
 {
-    public static class StockMarketMonitor
+    public class StockMarketMonitor
     {
-        [FunctionName("StockMarketMonitor")]
-        public async static Task Run([TimerTrigger("00 30 15 * * *")]TimerInfo myTimer, ILogger log)
+        private readonly IHttpRequestService _httpService;
+        private readonly INotificationService _notificationService;
+
+        public StockMarketMonitor(IHttpRequestService httpService, INotificationService notificationService)
         {
-            log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+            _httpService = httpService;
+            _notificationService = notificationService;
+        }
 
-            // Example config, can be inputed as parameters aswell
-            List<string> symbols = new List<string>() {"IBM", "AAPL", "MSFT" };
-            List<StockInfo> stocks = new List<StockInfo>();
+        [FunctionName("StockMarketMonitor")]
+        public async Task Run([TimerTrigger("00 30 15 * * *", RunOnStartup = true)]TimerInfo myTimer, ILogger log)
+        {
+            // Example: Configure stocks and recipients
+            List<Stock> stocks = new List<Stock>() { new Stock("IBM"), new Stock("AAPL") };
+            List<Recipient> recipients = new List<Recipient>() { new Recipient("test guy", "test@gmail.com", "+46738748766") };
 
-            // Get stock info
-            var stockService = new StockInfoService();
-            foreach (var symbol in symbols)
+            // Gather opening prices
+            foreach (var stock in stocks)
             {
-                var stock = await stockService.GetStockInfo(symbol);
+                var quotes = await _httpService.GetStockQuotes(_httpService.BuildEndpointURL(stock.Symbol));
+                var timeSeries = quotes["Time Series (Daily)"].ToObject<Dictionary<string, Dictionary<string, string>>>().First().Value;
+                stock.OpenPrice = double.Parse(timeSeries.Values.First(), CultureInfo.InvariantCulture);
                 stocks.Add(stock);
             }
 
-            // Send email notification
-            var emailService = new MailService();
-            await emailService.SendEmailNotification(stocks);
+            // Send notifications
+            await _notificationService.SendEmailNotification(stocks, recipients);
+            await _notificationService.SendTextMessageNotification(stocks, recipients);
         }
     }
 }
